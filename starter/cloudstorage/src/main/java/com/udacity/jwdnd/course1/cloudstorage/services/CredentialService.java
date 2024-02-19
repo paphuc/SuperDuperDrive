@@ -14,10 +14,12 @@ public class CredentialService {
 
     private final CredentialMapper credentialMapper;
     private final UserService userService;
+    private final EncryptionService encryptionService;
 
-    public CredentialService(CredentialMapper credentialMapper, UserService userService) {
+    public CredentialService(CredentialMapper credentialMapper, UserService userService, EncryptionService encryptionService) {
         this.credentialMapper = credentialMapper;
         this.userService = userService;
+        this.encryptionService = encryptionService;
     }
 
     public boolean delete(Integer credentialId, Authentication auth) {
@@ -39,6 +41,10 @@ public class CredentialService {
 
     public List<Credential> get(Authentication authentication) {
         User user = userService.selectByName(authentication.getName());
-        return credentialMapper.selectByUser(user);
+        List<Credential> credentials =credentialMapper.selectByUser(user);
+        for (int i = 0; i < credentials.size(); i++) {
+            credentials.get(i).setDecryptPassword(encryptionService.decryptValue(credentials.get(i).getPassword(), credentials.get(i).getKey()));
+        }
+        return credentials;
     }
 }

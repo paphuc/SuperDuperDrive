@@ -37,8 +37,8 @@ public class SignupController {
             if (num < 0) {
                 signupError = "Signing up failed. Please try again.";
             } else {
-                model.addAttribute("signupSuccess", true);
-                return "redirect:/login";
+                model.addAttribute("signupSuccess", "true");
+                return "login";
             }
         }
 

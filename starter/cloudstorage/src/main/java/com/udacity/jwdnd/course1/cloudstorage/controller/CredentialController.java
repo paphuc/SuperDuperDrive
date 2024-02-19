@@ -44,7 +44,6 @@ public class CredentialController {
         String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), encodedKey);
         credential.setKey(encodedKey);
         credential.setPassword(encryptedPassword);
-
         Boolean status;
 
         if (Objects.isNull(credential.getCredentialId())) {
