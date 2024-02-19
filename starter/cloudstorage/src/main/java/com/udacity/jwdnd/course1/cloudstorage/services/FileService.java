@@ -4,10 +4,12 @@ import com.udacity.jwdnd.course1.cloudstorage.mapper.FileMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,6 +29,13 @@ public class FileService {
     public Boolean create(MultipartFile multipartFile, Authentication authentication) {
         User user = userService.selectByName(authentication.getName());
         String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+
+        long kilobytes = (multipartFile.getSize() / 1024);
+        long megabytes = (kilobytes / 1024);
+        if (megabytes > 1) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
         File file = null;
         try {
             file = new File(null, fileName, multipartFile.getContentType(), String.valueOf(multipartFile.getSize()), user.getUserId(), multipartFile.getBytes());
